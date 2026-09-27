@@ -1,7 +1,18 @@
 services:
   - type: web
-    name: toys-shop-ravet
+    name: tiny-tyres
     runtime: static
-    buildCommand: ""
+
+    buildCommand: echo "Tiny Tyres static website"
+
     staticPublishPath: .
-    pullRequestPreviewsEnabled: true
+
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600
+
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
