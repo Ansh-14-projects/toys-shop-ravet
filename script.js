@@ -1,134 +1,299 @@
-"use strict";
-
-const menuBtn = document.getElementById("menuBtn");
-const navMenu = document.getElementById("navMenu");
-
-if (menuBtn && navMenu) {
-
-  menuBtn.addEventListener("click", function () {
-
-    navMenu.classList.toggle("open");
-
-    if (navMenu.classList.contains("open")) {
-      menuBtn.textContent = "✕";
-    } else {
-      menuBtn.textContent = "☰";
-    }
-
-  });
+/* =========================================
+   TINY TYRES WEBSITE
+   Main JavaScript
+========================================= */
 
 
-  navMenu.querySelectorAll("a").forEach(function (link) {
+/*
+    IMPORTANT:
 
-    link.addEventListener("click", function () {
+    Put the shop's real WhatsApp number here.
 
-      navMenu.classList.remove("open");
+    Example:
 
-      menuBtn.textContent = "☰";
+    const WHATSAPP_NUMBER = "919876543210";
+
+    Do NOT put +, spaces or hyphens.
+
+    For now it is intentionally blank because
+    I could not verify Tiny Tyres' WhatsApp number
+    from a reliable public source.
+*/
+
+const WHATSAPP_NUMBER = "";
+
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+const mobileMenu = document.getElementById("mobileMenu");
+const navLinks = document.getElementById("navLinks");
+
+
+if (mobileMenu && navLinks) {
+
+    mobileMenu.addEventListener("click", function () {
+
+        navLinks.classList.toggle("open");
+
+        if (navLinks.classList.contains("open")) {
+            mobileMenu.textContent = "✕";
+        } else {
+            mobileMenu.textContent = "☰";
+        }
 
     });
 
-  });
+
+    const navigationLinks =
+        navLinks.querySelectorAll("a");
+
+
+    navigationLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            navLinks.classList.remove("open");
+
+            mobileMenu.textContent = "☰";
+
+        });
+
+    });
 
 }
 
 
-/* COPY ADDRESS */
+/* =========================================
+   PRODUCT FILTER
+========================================= */
 
-const copyBtn = document.getElementById("copyBtn");
-const toast = document.getElementById("toast");
+const filterButtons =
+    document.querySelectorAll(".filter");
 
-const address =
-  "Shop No 5, Balchandran Blessing, 6, Pipeline Rd, near Shinde Wasti Road, Ganesh Nagar, Ravet, Pimpri-Chinchwad, Maharashtra 412101";
-
-
-function showToast(message) {
-
-  if (!toast) {
-    return;
-  }
-
-  toast.textContent = message;
-
-  toast.classList.add("show");
-
-  setTimeout(function () {
-
-    toast.classList.remove("show");
-
-  }, 2200);
-
-}
+const productCards =
+    document.querySelectorAll(".product-card");
 
 
-if (copyBtn) {
+function filterProducts(category) {
 
-  copyBtn.addEventListener(
-    "click",
-    async function () {
+    filterButtons.forEach(function (button) {
 
-      try {
+        button.classList.remove("active");
+
+        if (button.dataset.filter === category) {
+            button.classList.add("active");
+        }
+
+    });
+
+
+    productCards.forEach(function (card) {
+
+        const cardCategories =
+            card.dataset.category
+                .toLowerCase()
+                .split(" ");
+
 
         if (
-          navigator.clipboard &&
-          window.isSecureContext
+            category === "all" ||
+            cardCategories.includes(category)
         ) {
 
-          await navigator.clipboard.writeText(
-            address
-          );
+            card.classList.remove("hidden");
 
         } else {
 
-          const textArea =
-            document.createElement("textarea");
-
-          textArea.value = address;
-
-          textArea.style.position = "fixed";
-          textArea.style.opacity = "0";
-
-          document.body.appendChild(textArea);
-
-          textArea.focus();
-          textArea.select();
-
-          const copied =
-            document.execCommand("copy");
-
-          textArea.remove();
-
-          if (!copied) {
-            throw new Error("Copy failed");
-          }
+            card.classList.add("hidden");
 
         }
 
-        showToast("Address copied!");
+    });
 
-      } catch (error) {
 
-        console.error(error);
+    const featuredSection =
+        document.getElementById("featured");
 
-        showToast(
-          "Copy failed. Please copy manually."
-        );
 
-      }
+    if (featuredSection) {
+
+        featuredSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
 
     }
-  );
 
 }
 
 
-/* YEAR */
+filterButtons.forEach(function (button) {
 
-const year = document.getElementById("year");
+    button.addEventListener("click", function () {
 
-if (year) {
+        filterProducts(button.dataset.filter);
 
-  year.textContent =
-    new Date().getFullYear();
+    });
+
+});
+
+
+/* =========================================
+   WHATSAPP
+========================================= */
+
+function openWhatsApp() {
+
+    if (!WHATSAPP_NUMBER) {
+
+        alert(
+            "Tiny Tyres WhatsApp number has not been added yet. " +
+            "Open script.js and add the shop's WhatsApp number."
+        );
+
+        return;
+
+    }
+
+
+    const message =
+        "Hello Tiny Tyres! I would like to know about your available cars, die-cast models and toys.";
+
+
+    const url =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(message);
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
 
 }
+
+
+/* =========================================
+   PRODUCT WHATSAPP ENQUIRY
+========================================= */
+
+function askWhatsApp(productName) {
+
+    if (!WHATSAPP_NUMBER) {
+
+        alert(
+            "Tiny Tyres WhatsApp number has not been added yet. " +
+            "Open script.js and add the shop's WhatsApp number."
+        );
+
+        return;
+
+    }
+
+
+    const message =
+        "Hello Tiny Tyres! I am interested in: " +
+        productName +
+        ". Please let me know if it is available.";
+
+
+    const url =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(message);
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+}
+
+
+/* =========================================
+   BACK TO TOP
+========================================= */
+
+const backToTop =
+    document.getElementById("backToTop");
+
+
+window.addEventListener("scroll", function () {
+
+    if (window.scrollY > 600) {
+
+        backToTop.classList.add("show");
+
+    } else {
+
+        backToTop.classList.remove("show");
+
+    }
+
+});
+
+
+if (backToTop) {
+
+    backToTop.addEventListener("click", function () {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    });
+
+}
+
+
+/* =========================================
+   CURRENT YEAR
+========================================= */
+
+const yearElement =
+    document.getElementById("year");
+
+
+if (yearElement) {
+
+    yearElement.textContent =
+        new Date().getFullYear();
+
+}
+
+
+/* =========================================
+   IMAGE ERROR HANDLING
+========================================= */
+
+const allImages =
+    document.querySelectorAll("img");
+
+
+allImages.forEach(function (image) {
+
+    image.addEventListener("error", function () {
+
+        /*
+            If an online image fails,
+            keep the card looking clean.
+        */
+
+        image.style.opacity = "0";
+
+        image.parentElement.classList.add(
+            "image-failed"
+        );
+
+    });
+
+});
